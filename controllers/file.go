@@ -1,12 +1,13 @@
 package controllers
 
 import (
-	"bytes"
 	"echo-http/database"
 	"echo-http/model"
+	"encoding/csv"
+	"io"
 	"net/http"
+	"reflect"
 	"strconv"
-	"strings"
 
 	"github.com/labstack/echo"
 )
@@ -30,32 +31,35 @@ func Upload(c echo.Context) error {
 	}
 	defer src.Close()
 
-	buf := new(bytes.Buffer)
-	buf.ReadFrom(src)
-	s := buf.String()
-
-	arr := strings.Split(s, "\n")
 	user := model.User{}
-	for i, row := range arr {
-		if i > 0 {
-			row := strings.Split(row, ",")
-			if len(row) > 1 {
-				if row[0] == "" {
-					user = model.User{
-						Firstname: row[1],
-						Lastname:  row[2],
-					}
-					if database.Db.NewRecord(user) {
-						database.Db.Create(&user)
-					}
-				} else {
-					id, _ := strconv.Atoi(row[0])
-					user = model.User{
-						ID:        id,
-						Firstname: row[1],
-						Lastname:  row[2],
-					}
-					database.Db.Model(&user).Updates(&user)
+	reader := csv.NewReader(src)
+	for {
+		record, err := reader.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return c.Render(http.StatusOK, "home.html", map[string]interface{}{
+				"name": "Fail",
+				"msg":  "Something is broken.",
+			})
+		}
+		if !reflect.DeepEqual(record, []string{"id", "firstname", "lastname"}) {
+			if record[0] != "" {
+				id, _ := strconv.Atoi(record[0])
+				user = model.User{
+					ID:        id,
+					Firstname: record[1],
+					Lastname:  record[2],
+				}
+				database.Db.Model(&user).Updates(&user)
+			} else {
+				user = model.User{
+					Firstname: record[1],
+					Lastname:  record[2],
+				}
+				if database.Db.NewRecord(user) {
+					database.Db.Create(&user).AutoMigrate()
 				}
 			}
 		}
