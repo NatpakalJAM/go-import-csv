@@ -1,0 +1,21 @@
+{{define "upload.html"}}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, 
+        user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>upload CSV</title>
+</head>
+
+<body>
+    <h1>Upload</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        CSV Files: <input type="file" name="file" accept=".csv">
+        <input type="submit" value="Submit">
+    </form>
+</body>
+
+</html>
+{{end}}
