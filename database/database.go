@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"go-import-csv/model"
 
 	_ "github.com/go-sql-driver/mysql" // driver
 	"github.com/jinzhu/gorm"
@@ -31,4 +32,7 @@ func Init() {
 	if err != nil {
 		panic(fmt.Errorf("Error connect db `` %s", err))
 	}
+
+	var user model.User
+	Db.AutoMigrate(&user)
 }

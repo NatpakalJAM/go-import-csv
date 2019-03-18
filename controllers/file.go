@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"echo-http/database"
-	"echo-http/model"
+	"go-import-csv/database"
+	"go-import-csv/model"
 	"encoding/csv"
 	"io"
 	"net/http"

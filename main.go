@@ -1,10 +1,10 @@
 package main
 
 import (
-	"echo-http/controllers"
-	"echo-http/database"
-	"echo-http/handler"
 	"fmt"
+	"go-import-csv/controllers"
+	"go-import-csv/database"
+	"go-import-csv/handler"
 	"html/template"
 	"io"
 
@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Define the template registry struct
+// TemplateRegistry -> Define the template registry struct
 type TemplateRegistry struct {
 	templates *template.Template
 }
@@ -41,7 +41,7 @@ func init() {
 	database.Init()
 }
 
-// Implement e.Renderer interface
+// Render -> Implement e.Renderer interface
 func (t *TemplateRegistry) Render(w io.Writer, name string, data interface{}, c echo.Context) error {
 	return t.templates.ExecuteTemplate(w, name, data)
 }
